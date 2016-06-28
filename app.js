@@ -203,12 +203,35 @@ function receivedMessage(event) {
 
   if (messageText) {
 
+
+
+    var upperCaseMessage = messageText.toUpperCase();
+    if (upperCaseMessage.indexOf("APPLY") > -1 || upperCaseMessage.indexOf("APPLICATION") > -1) {
+      sendApplyButtons(senderID);
+    }
+
+    if (upperCaseMessage.indexOf("EXEC") > -1 || 
+        upperCaseMessage.indexOf("DIRECTOR") > -1 || 
+        upperCaseMessage.indexOf("BOARD") > -1 || 
+        upperCaseMessage.indexOf("LEADERSHIP") > -1) {
+      sendExecMessage(senderID);
+    }
+
+    if (upperCaseMessage.indexOf("PROJECTS") > -1) {
+      sendRecentProjects(senderID);
+    }
+
+    if (upperCaseMessage.indexOf("HACK4IMPACT") > -1 ||
+        upperCaseMessage.indexOf("PHOTO") > -1) {
+      sendImageMessage(senderID, "https://scontent-dfw1-1.xx.fbcdn.net/t31.0-8/12640521_1052898498063560_537762223506210021_o.jpg");
+    }
+
     // If we receive a text message, check to see if it matches any special
     // keywords and send back the corresponding example. Otherwise, just echo
     // the text we received.
     switch (messageText) {
       case 'image':
-        sendImageMessage(senderID);
+        sendImageMessage(senderID, "https://scontent-dfw1-1.xx.fbcdn.net/t31.0-8/12640521_1052898498063560_537762223506210021_o.jpg");
         break;
 
       case 'button':
@@ -224,7 +247,6 @@ function receivedMessage(event) {
         break;
 
       default:
-        sendTextMessage(senderID, messageText);
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
@@ -287,7 +309,7 @@ function receivedPostback(event) {
  * Send a message with an using the Send API.
  *
  */
-function sendImageMessage(recipientId) {
+function sendImageMessage(recipientId, url) {
   var messageData = {
     recipient: {
       id: recipientId
@@ -296,7 +318,7 @@ function sendImageMessage(recipientId) {
       attachment: {
         type: "image",
         payload: {
-          url: "http://i.imgur.com/zYIlgBl.png"
+          url: url
         }
       }
     }
@@ -354,6 +376,59 @@ function sendButtonMessage(recipientId) {
   callSendAPI(messageData);
 }
 
+function sendExecMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: "The Co-Directors of Hack4Impact are Ben Sandler and Anosha Minai",
+          buttons:[{
+            type: "web_url",
+            url: "http://hack4impact.org/contact/",
+            title: "Get in Contact"
+          }]
+        }
+      }
+    }
+  };  
+
+  callSendAPI(messageData);
+}
+
+function sendApplyButtons(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "button",
+          text: "Who are you?",
+          buttons:[{
+            type: "web_url",
+            url: "https://docs.google.com/forms/d/1u9t4eKo8YCgdxqgIHWltNA5EDSwgIMX0I2eUU_oBoe4/viewform",
+            title: "Non-profit"
+          }, {
+            type: "web_url",
+            url: "http://hack4impact.org/students/",
+            title: "Student"
+          }]
+        }
+      }
+    }
+  };  
+
+  callSendAPI(messageData);
+}
+
+
 /*
  * Send a Structured Message (Generic Message type) using the Send API.
  *
@@ -395,6 +470,47 @@ function sendGenericMessage(recipientId) {
               type: "postback",
               title: "Call Postback",
               payload: "Payload for second bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };  
+
+  callSendAPI(messageData);
+}
+
+
+
+function sendRecentProjects(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "Kiva Fall 2014",
+            subtitle: "Fall 2014 Project with Kiva",
+            item_url: "http://hack4impact.org/projects/fall-2014/kiva/",               
+            image_url: "https://www.looksharp.com/blog/wp-content/uploads/2011/10/kivaloans.jpg",
+            buttons: [{
+              type: "web_url",
+              url: "http://hack4impact.org/projects/fall-2014/kiva/",
+              title: "Visit Project Site"
+            }],
+          }, {
+            title: "UAC Spring 2015",
+            subtitle: "Urban Affairs Coalition",
+            item_url: "http://hack4impact.org/projects/spring-2015/uac/",               
+            image_url: "http://www.pgworks.com/images/uac_logo_final_pms.jpg",
+            buttons: [{
+              type: "web_url",
+              url: "http://hack4impact.org/projects/spring-2015/uac/",
+              title: "Visit Project Site"
             }]
           }]
         }
